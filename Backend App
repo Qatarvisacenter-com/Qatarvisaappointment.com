@@ -1,0 +1,33 @@
+from flask import Flask, request, render_template
+from whatsapp_api import send_verification_code
+
+app = Flask(__name__, template_folder='../frontend')
+
+available_dates = {
+    'February': ['5','9','12','16','18','25','27'],
+    'March': ['2','5','7','16','20','24','30']
+}
+
+time_slots = ['11:15AM','11:45AM','12:00PM','12:55PM','3:00PM']
+
+@app.route('/')
+def home():
+    return render_template('index.html', dates=available_dates, slots=time_slots)
+
+@app.route('/book', methods=['POST'])
+def book():
+    data = request.get_json()
+    city = data['city']
+    slots = data['slots']
+    selected_date = data['date']
+    phone = data['phone']
+    visa = data['visa']
+    passport = data['passport']
+
+    # WhatsApp verification
+    verification_code = send_verification_code(phone)
+
+    return f"✅ Verification code sent to WhatsApp {phone} for {selected_date} at slots {', '.join(slots)}! Visa: {visa}, Passport: {passport}"
+
+if __name__ == '__main__':
+    app.run(debug=True)
