@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QVC Medical Appointment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <img src="logo.png" class="logo" alt="QVC Logo">
+  <h2>Book Your Medical Appointment</h2>
+
+  <form id="appointmentForm">
+    <label>City:</label><br>
+    <select name="city" id="city">
+      <option value="Islamabad">Islamabad</option>
+      <option value="Karachi">Karachi</option>
+    </select><br>
+
+    <label>Select Date:</label><br>
+    <select name="date" id="date"></select><br>
+
+    <label>Select Time Slots:</label><br>
+    <div id="slots">
+      <input type="checkbox" name="slot" value="11:15AM">11:15AM
+      <input type="checkbox" name="slot" value="11:45AM">11:45AM
+      <input type="checkbox" name="slot" value="12:00PM">12:00PM
+      <input type="checkbox" name="slot" value="12:55PM">12:55PM
+      <input type="checkbox" name="slot" value="3:00PM">3:00PM
+    </div><br>
+
+    <label>Visa Number:</label><br>
+    <input type="text" id="visa" placeholder="Enter Visa Number" required><br>
+
+    <label>Passport Number:</label><br>
+    <input type="text" id="passport" placeholder="Enter Passport Number" required><br>
+
+    <label>WhatsApp Number:</label><br>
+    <input type="text" id="phone" placeholder="03321557254" required><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <footer>
+    Website Developer: Nadeem | 03180502240 <br>
+    Digital Marketer: Nadeem | 03180502240
+  </footer>
+</div>
+
+<script>
+const datesDropdown = document.getElementById('date');
+const availableDates = {
+  'February': ['5','9','12','16','18','25','27'],
+  'March': ['2','5','7','16','20','24','30']
+};
+
+for (let month in availableDates) {
+  availableDates[month].forEach(day => {
+    const option = document.createElement('option');
+    option.value = `${day} ${month}`;
+    option.text = `${day} ${month}`;
+    datesDropdown.add(option);
+  });
+}
+
+document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const city = document.getElementById('city').value;
+  const phone = document.getElementById('phone').value;
+  const selected_date = document.getElementById('date').value;
+  const slots = Array.from(document.querySelectorAll('input[name="slot"]:checked')).map(s => s.value);
+  const visa = document.getElementById('visa').value;
+  const passport = document.getElementById('passport').value;
+
+  const response = await fetch('/book', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({city, slots, date:selected_date, phone, visa, passport})
+  });
+
+  const result = await response.text();
+  alert(result);
+});
+</script>
+</body>
+</html>
